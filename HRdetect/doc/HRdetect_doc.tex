@@ -1,0 +1,366 @@
+%=======================02-713 LaTeX template, following the 15-210 template==================
+%
+% You don't need to use LaTeX or this template, but you must turn your homework in as
+% a typeset PDF somehow.
+%
+% How to use:
+%    1. Update your information in section "A" below
+%    2. Write your answers in section "B" below. Precede answers for all 
+%       parts of a question with the command "\question{n}{desc}" where n is
+%       the question number and "desc" is a short, one-line description of 
+%       the problem. There is no need to restate the problem.
+%    3. If a question has multiple parts, precede the answer to part x with the
+%       command "\part{x}".
+%    4. If a problem asks you to design an algorithm, use the commands
+%       \algorithm, \correctness, \runtime to precede your discussion of the 
+%       description of the algorithm, its correctness, and its running time, respectively.
+%    5. You can include graphics by using the command \includegraphics{FILENAME}
+%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{cases}
+\usepackage{mcode}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+\newcommand\question[2]{\vspace{.25in}\hrule\textbf{#1}\vspace{.5em}\hrule\vspace{.10in}}
+\renewcommand\part[1]{\vspace{.10in}\textbf{#1}}
+\newcommand\algorithm{\vspace{.10in}\textbf{Algorithm: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+
+\renewcommand{\arraystretch}{1.5}
+\pagestyle{fancyplain}
+%\lhead{\textbf{\NAME\ (\UNIID)}}
+\chead{\textbf{ENGN3213}}
+\rhead{\today}
+%%------------------------------------------------
+%% packages
+%%------------------------------------------------
+\usepackage{amsfonts}%
+\usepackage{bm}%
+%\usepackage{cite,url,citesort}
+\usepackage{verbatim,latexsym}
+\usepackage{placeins}
+
+\usepackage{alltt}
+\usepackage{color}
+% \usepackage{fullpage}
+\definecolor{string}{rgb}{0.7,0.0,0.0}
+\definecolor{comment}{rgb}{0.13,0.54,0.13}
+\definecolor{keyword}{rgb}{0.0,0.0,1.0}
+
+%% Adjust paragraph indent
+\setlength{\parindent}{0pt}%
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Jurong Huang}  % your name
+\newcommand\UNIID{u5190020}     % your andrew id
+\newcommand\HWNUM{1}              % the homework number
+
+
+\begin{document} %\raggedright
+%***************************************************
+%%Cover sheet
+%\begin{figure}[!ht]
+%\begin{minipage}[!ht]{0.4\columnwidth}
+%\includegraphics[width=\columnwidth]{figs/anu_logo}
+%\end{minipage}
+%\hspace{0.5cm}
+%\begin{minipage}[!ht]{0.60\columnwidth}
+%Research School of Engineering\\
+%ANU College of Engineering and Computer Science
+%\end{minipage}
+%\end{figure}
+%
+%%\vspace{1cm}
+%
+%\fbox{
+%\begin{minipage}[!ht]{0.95\columnwidth}
+%\begin{centering}
+%ASSIGNMENT COVER SHEET\\
+%\vspace{0.5cm}
+%THIS COVER SHEET SHOULD BE ATTACHED TO THE FRONT OF YOUR ASSIGNMENT WHEN IT IS SUBMITTED\\
+%\end{centering}
+%\vspace{1cm}
+%STUDENT NAME: \textbf{Jurong Huang}\\
+%\\
+%STUDENT ID NUMBER: \textbf{u5190020}\\
+%\\
+%COURSE NAME: Digital Systems and Microprocessors\\
+%\\
+%COURSE CODE: \textbf{ENGN3213}\\
+%\\
+%DUE DATE: \\
+%\end{minipage}
+%}
+%
+%\vspace{1cm}
+%
+%\underline{Submission of this assignment constitutes a declaration that:}
+%%\vspace{1cm}
+%\begin{itemize}
+%  \item No part of this work has been copied from any other person's work except where due acknowledgement is made in the text; and
+%  \item No part of this work has been written by any other person except where such collaboration has been authorised by the course lecturer concerned, and
+%  \item No part of this work has been submitted for assessment in another course in this or another part of the University except where authorised by the lecturer(s) concerned.
+%\end{itemize}
+%
+%\vspace{1cm}
+%
+%Student Name: (Write your full name) \\
+%Date: (date of submission)\\
+%
+%\vspace{1cm}
+%
+%\vfill
+%%end of cover page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\pagebreak
+
+%
+\title{Documentation\\for the\\ECG Signals Processing System}%
+% make the title area
+\maketitle
+\begin{figure}[H]
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figs/screen1.jpg}
+\end{minipage}
+%
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figs/screen2.jpg}
+\end{minipage}
+\end{figure}
+
+%Section B==============Put your answers to the questions %below here=======================
+% no need to restate the problem --- the graders know which problem is which,
+% but replacing "The First Problem" with a short phrase will help you remember
+% which problem this is when you read over your homeworks to study.
+%
+\newpage
+\question{Overview}{}
+This system uses the ATmega8 to process repeatable analogue ECG signals and computes relevant statistics. There are two output peripherals:
+\begin{enumerate}
+\item \textbf{LCD}: all relevant statistics are displayed on the LCD on a rotating basis
+\item \textbf{LED}: the \textit{green} LED flashes when a heart beat is detected
+\end{enumerate}
+%
+%
+\question{Features}{}
+\begin{itemize}
+\item computes the following statistics in \textbf{milliseconds}:
+	\begin{itemize}
+	\item average Heart Rate and NN-interval with $10^{-3}$ precision over 15 seconds intervals
+	\item standard deviations of NN-intervals and difference between adjacent NN-intervals over 5 minutes intervals
+	\item number and percentage of adjacent NN-intervals differing more than 50ms since system start up
+	\end{itemize}
+%
+\item filters low frequency noise (50Hz noise tested)
+\item can run indefinitely
+\end{itemize}
+%
+\question{High Level Implementation}{}
+This section provides a high level overview of this system's implementation (Listing~\ref{lst:implementation}).
+\begin{lstlisting}[language=C, numbers=left, stepnumber=1, caption=High Level System implementation, label=lst:implementation]
+initialise hardware: Timer1, Timer0 and ADC
+while (1) do
+	if current ADC conversion done
+		compute moving average of input
+		if time < 2 seconds
+			find threshold
+		else
+			if moving average < threshold
+				compute statistics (unit == ms)
+		if time changed
+			display statistics
+\end{lstlisting}
+%
+\question{Design Considerations}{}
+This section outlines the key design choices made during the development of the ECG signals processing system. These choices are motivated by three major requirements: \textbf{real time performance}, \textbf{accuracy} and \textbf{hardware constraints}. 
+
+\part{ADC} \newline
+The ADC is responsible for discretising the input ECG signal in real time. In consideration for accuracy, the ATmega8's ADC is set to operate at full resolution (i.e. 10-bits); the corresponding discretisation error, $\epsilon$, is given by Eqn~\ref{eqn:derror}.
+\begin{equation}
+\label{eqn:derror}
+0 \leq \epsilon < \Delta = \frac{V_{range}}{2^n-1} = \frac{5}{2^{10}-1} = 0.049V
+\end{equation}
+This requires the ADC clock, supplied by the ATmega8 clock, to be within $[50, 200]$kHz. Since the ATmega8 provided runs at 16MHz, a prescaler of 128 is needed:
+\begin{equation*}
+\frac{16MHz }{128} = 125kHz \in [50, 200]kHz
+\end{equation*}
+The ADC will operate in single conversion mode, which allows the sampling frequency to be controlled. The desired settings are enabled through the ADCSRA register (Listing~\ref{lst:adc}).
+
+\part{Timer1 and Time Keeping} \newline
+Since this system measures heart rate, precise timing is required, without which the desired statistics cannot be computed accurately. Thus Timer1 keeps a precise global time (i.e. the amount of time elapsed since system start up). In particular, Timer1 will periodically count up to EXACTLY 1 second and reset. This is done using the CTC (Clear Timer on Compare) mode with a prescaler of 1024:
+\begin{equation*}
+1sec = \frac{1}{16MHz} * 1024 * cnt \implies cnt = 15625
+\end{equation*}
+EXACTLY 1 second will elapse after 15625 counts and an interrupt is generated. These settings are enabled through the TCCR1B register (Listing~\ref{lst:timer1}).
+%
+\begin{figure}[H]
+\begin{minipage}{0.5\textwidth}
+\centering
+\begin{lstlisting}[language=Python, numbers=left, stepnumber=1, caption=Knuth Algorithm, label=lst:knuth]
+for x in ADC_data_stream:
+    n = n + 1
+    delta = x - mean
+    mean = mean + delta / n
+    M2 = M2 + delta * (x - mean)
+
+variance = M2/(n - 1)
+standard_deviation = sqrt(variance)
+\end{lstlisting}
+\end{minipage}
+%
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figs/interrupt.png}
+\caption{Timing of interrupt routines}
+\label{fig:interrupt}
+\end{minipage}
+\end{figure}
+%
+\part{Timer0 and Sampling Frequency } \newline
+Due to ATmega8's hardware constraints, an appropriate sampling frequency, $f_s$, is needed so that the data processing can keep up with the ADC conversion. By the Nyquist theorem, aliasing will not occur if $f_{s} = 2f_{input}$. Assuming the noise in the ECG signals is up to 250Hz, $f_{s} =500$Hz is adequate. However, in this system, $f_{s}$ is set to 1020Hz (i.e. sampled every 0.98ms). This number is chosen as the test signals are sampled at 1kHz (allowing consistent software simulation). Timer0, instead of Timer1, starts the ADC conversions so $f_s$ can be changed without affecting the global time keeping scheme. In addition, 1020Hz is used instead of 1kHz to avoid potential conflict with Timer1's interrupt. Listing~\ref{lst:timer0} outlines Timer0 settings.
+
+\part{Interrupt Routines} \newline
+This system has three interrupt routines: Timer1, Timer0 and ADC. Their role is to perform simple operations, i.e.: raising flags or updating volatile variables; this prevents the system from dwelling in these routines for unnecessarily long and missing other crucial events in the program. Fig~\ref{fig:interrupt} shows the timing of these routines.
+
+%
+\part{Variable Types} \newline
+Since the ATmega8 does not have a FPU, \textit{floats} are not used as computations involving \textit{floats} are costly, which hinders real time performance. The following data types are used:
+\begin{enumerate}
+\item \textbf{uint8\_t}: 8-bit unsigned int; for flags, which are small numbers
+\item \textbf{int16\_t}: 16-bit signed int; for most computation results as they can handle negative numbers
+\item \textbf{uint16\_t}: 16-bit unsigned int; for counts as they overflow at $2^{16}$ 
+\item \textbf{uint32\_t}: 32-bit signed int; for the standard deviation results to avoid quick overflow
+\end{enumerate}
+%
+%
+\question{Key Algorithms}{}
+The operation of this system relies on the robust detection of RR-intervals, real time computation of variance and mean and insusceptibility to noise. This section outlines the algorithms employed to solve these challenges.
+
+\part{Thresholding - Peak detection} \newline
+The peak detection algorithm used in this system, illustrated in Fig~\ref{fig:thresholding}, is a modified version of the general thresholding algorithm; the modifications are:
+\begin{enumerate}
+\item instead of detecting the R-peaks, which are more susceptible to amplitude fluctuations, S-peaks, which are more stable, are detected; as the heart signal is periodic and the S-peaks immediately follow the R-peaks, the SS-intervals are equivalent to the RR-intervals
+
+\item as input normalisation may not be consistent, a predefined threshold may not suit all signals; thus the first 2000 samples (i.e. equivalent to 2 seconds with $f_s = 1$kHz) are used to determine an appropriate threshold; implemented in \textsc{find\_threshold}
+\end{enumerate}
+
+\part{Online Variance and Mean} \newline
+To display the statistics in real time and to reduce data storage requirements, the variance and mean are computed online. This is achieved with the Knuth algorithm, which is described in Listing~\ref{lst:knuth}.
+
+\part{Moving Average Filtering} \newline
+One of the test signals is the superposition of a heart signal and 50Hz noise. To use the thresholding algorithm, the noise must be filtered. This is done by a moving average filter (Fig~\ref{fig:filter}). Essentially, a window of length N (represented by the $z^{-1}$ delays) moves through the input $x[n]$ and the current output $y[n]$ is the average of all values within the window (represented by the scalar $b_N$). This is implemented in \textsc{moving\_avg}.
+%\begin{figure}[H]
+%\centering
+%\caption{Moving Average Filter Hardware Implementation}
+%\includegraphics[width=0.5\textwidth]{figs/FIR_filter.png}
+%\label{fig:filter}
+%\end{figure}
+%
+%
+%
+\begin{figure}[H]
+%
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{figs/thresholding.png}
+\caption{Illustration of the Thresholding algorithm}
+\label{fig:thresholding}
+\end{minipage}
+%
+\begin{minipage}{0.5\textwidth}
+\centering
+\caption{Moving Average Filter Hardware Implementation}
+\includegraphics[width=\textwidth]{figs/FIR_Filter.png}
+\label{fig:filter}
+\end{minipage}
+\end{figure}
+%
+\question{Expected Accuracy}{}
+This section discusses the expected accuracy of the RR-detection and other statistics; considerations for ensuring best accuracy will be provided.
+
+\part{RR-intervals} \newline
+When a beat is detected through Thresholding, the current value in Timer1's counter is recorded; the RR-intervals are given by the difference between two consecutive readings. The values from TCNT1 are converted to \textit{ms} by dividing 16 (Eqn~\ref{eqn:toms}).
+\begin{equation}
+\label{eqn:toms}
+1ms = \frac{1}{16MHz}*1024*CNT \implies CNT \approx 16
+\end{equation}
+Thus the expected RR-interval error: $\epsilon_{RR} \leq 10^{-3}$.
+
+\part{Statistics Computations} \newline
+Since integer division is used in computing the mean and variance (Listing~\ref{lst:knuth}), the loss of precision is inevitable. Thus, the means are reset every 15 seconds and the variance every 5 minutes.
+
+\part{Additional Considerations} \newline
+The system's accuracy can be affected by the instability of the amplifier and offset unit. Since the beat detection threshold is not dynamically updated, a fluctuating gain or offset could result in erroneous beat detection. In addition, it is strongly recommended to restart the system when switching between ECG signals allowing a suitable threshold to be determined.
+
+\newpage
+\question{Appendix}{}
+\begin{figure}[H]
+\begin{minipage}{0.5\textwidth}
+\centering
+\begin{lstlisting}[language=C, numbers=left, stepnumber=1, caption=Timer1 settings, label=lst:timer1]
+// set timer 1 Mode 4, CTC on OCR1A
+TCCR1B |= (1 << WGM12);
+// set compare value to 15625
+OCR1A = 15625;
+// set interrupt on compare match
+TIMSK |= (1 << OCIE1A);
+// set pre-scaler to 1024
+TCCR1B |= (1 << CS12) | (1 << CS10);
+\end{lstlisting}
+\end{minipage}
+%
+\begin{minipage}{0.5\textwidth}
+\centering
+\begin{lstlisting}[language=C, numbers=left, stepnumber=1, caption=Timer0 settings, label=lst:timer0]
+// Timer0, prescaler of 64
+TCCR0 = (1 << CS01) | (1 << CS00);
+// start ADC conversion every 0.98ms
+TCNT0 = 10;
+// enable overflow interrupt
+TIMSK |= (1 << TOIE0);
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\begin{minipage}{0.5\textwidth}
+\centering
+\begin{lstlisting}[language=C, numbers=left, stepnumber=1, caption=ADC settings, label=lst:adc]
+ADMUX = 0; // use ADC0
+ADMUX &= ~(1 << ADLAR); // 10-bit resolution
+ADMUX |= (1 << REFS0); // use AVcc as reference
+ADMUX &= ~( 1 << REFS1);
+// prescaler = 128
+ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); 
+ADCSRA |= (1 << ADEN); // enable ADC
+ADCSRA |= (1 << ADIE); // enable ADC interrupt
+ADCSRA |= (1 << ADSC); // start the ADC conversion
+\end{lstlisting}
+\end{minipage}
+%
+%\begin{minipage}{0.5\textwidth}
+%\centering
+%\begin{lstlisting}[language=C, caption=Timer0 settings, label=lst:timer0]
+%// Timer0, prescaler of 64
+%TCCR0 = (1 << CS01) | (1 << CS00);
+%// start ADC conversion every 0.98ms
+%TCNT0 = 10;
+%// enable overflow interrupt
+%TIMSK |= (1 << TOIE0);
+%\end{lstlisting}
+%\end{minipage}
+%
+\end{figure}
+
+\end{document}

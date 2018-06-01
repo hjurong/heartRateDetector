@@ -1,0 +1,116 @@
+///* http://stackoverflow.com/questions/6873683/matlab-signal-noise-removal
+// * if threshold is exceeded but has not switched, this is
+// * registered as a beat;
+// *
+// * ==> increment N_beats
+// *
+// * */
+//N_beats ++;
+//
+//if (N_beats <= 2) {
+//	/*
+//	 * read the current count from timer 1 and push into time2cnt
+//	 * and time1cnt, which represent a length 2 stack
+//	 *
+//	 * */
+//	time1cnt = time2cnt;
+//	// load current time (i.e. num clock cycles) from timer 1
+//	time2cnt = TCNT1;
+//}
+//
+//else {
+//	/*
+//	 * read the current count from timer 1 and push into time2cnt
+//	 * and time1cnt, which represent a length 2 stack
+//	 *
+//	 * */
+//	time1cnt = time2cnt;
+//	// load current time (i.e. num clock cycles) from timer 1
+//	time2cnt = TCNT1;
+//
+//	if (NN_prev == 0) {
+//		/*
+//		 * if there is only 1 RR-interval; i.e. 2 beats
+//		 * cannot calculate NN_diff
+//		 *
+//		 * */
+//		NN_prev = NN_current;
+//		NN_current = time2cnt - time1cnt;
+//
+//		/*
+//		 * online variance && mean
+//		 *
+//		 * */
+//		uint16_t delta1 = NN_current - NN_mean;
+//		NN_mean += delta1 / N_beats; // integer division
+//		// compute variance
+//		// NOTE: SDNN = variance * (N_beats-1)
+//		// ==> when outputting to screen need to divide
+//		// SDNN by (N_beats-1)
+//		SDNN += delta1*(NN_current - NN_mean);
+//	}
+//
+//	else {
+//		/*
+//		 * if there are more than 2 RR-intervals,
+//		 * start calculating the NN_diff stats
+//		 *
+//		 * */
+//		NN_prev = NN_current;
+//		NN_current = time2cnt - time1cnt;
+//
+//
+//		/*
+//		 * compute RMSSD:
+//		 *
+//		 * sqrt(sum_{i}{NN_diff^2})
+//		 *
+//		 * where: NN_diff = NN_{i}-NN_{i-1}
+//		 *
+//		 * RMSSD = sum_{i}{NN_diff^2} ==>
+//		 * need to take sqrt when outputting data
+//		 *
+//		 * */
+//		NN_diff = NN_current - NN_prev;
+//		RMSSD += NN_diff * NN_diff;
+//
+//		if (NN_diff > 49) {
+//			/*
+//			 * 50ms = 1e-6 * 1024 * cnt ==> cnt = 49
+//			 *
+//			 * where:
+//			 * 1e-6 == 1MHz clock
+//			 * 1024 == 1024 prescaler
+//			 * cnt == number of counts to reach 50ms
+//			 *
+//			 * */
+//
+//			NN50 ++;
+//		}
+//
+//
+//		/*
+//		 * online variance && mean
+//		 *
+//		 * NN-interval
+//		 *
+//		 * NN_diff
+//		 *
+//		 * */
+//		uint16_t delta1 = NN_current - NN_mean;
+//		NN_mean += delta1 / N_beats; // integer division
+//		// compute variance
+//		// NOTE: SDNN = variance * (N_beats-1)
+//		// ==> when outputting to screen need to divide
+//		// SDNN by (N_beats-1)
+//		SDNN += delta1*(NN_current - NN_mean);
+//
+//		uint16_t delta2 = NN_diff - NN_diff_mean;
+//		NN_diff_mean += delta2 / N_beats;
+//		// compute variance; i.e. SDSD
+//		// need to divide SDSD by (N_beats-1) to get
+//		// actual variance
+//		SDSD += delta2*(NN_diff - NN_diff_mean);
+//	}
+//
+//}
